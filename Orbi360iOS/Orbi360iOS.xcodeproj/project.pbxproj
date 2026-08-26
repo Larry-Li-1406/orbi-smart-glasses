@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		06609D4C9CAE403F947184AF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 245833F7B4E5422EB6E1F77B /* Assets.xcassets */; };
+		084039837E7442F6AF5453B8 /* MediaThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2175355BBF4499BDA82336 /* MediaThumbnailService.swift */; };
+		12C94D879E594A44A6EFA150 /* Orbi360App.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F5CF1A320148EB8B928B5E /* Orbi360App.swift */; };
+		1BAD8C5E8D9440E186D33D80 /* NFSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A551F942F52B40A59713540B /* NFSClient.swift */; };
+		2BBF7222AEA54D10815B4606 /* OrbiModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FAC0F1360094EE4B8384FC9 /* OrbiModels.swift */; };
+		307D4B5DA8A1496AACC7D8B3 /* stitchcore_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 05392A09638C4CB99F384D59 /* stitchcore_compat.c */; };
+		481507E910A64C6581DF3F51 /* OrbiCoreImageVideoStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2193E0F0AD41E481FF739F /* OrbiCoreImageVideoStitcher.swift */; };
+		4D1882B6470148E997430186 /* OrbiVideoPreviewExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F9E511CCF7A40AB9740EADC /* OrbiVideoPreviewExporter.swift */; };
+		77363A84B4914DC89C1FB915 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC361BB54D649398227BA89 /* RootView.swift */; };
+		7E3BC889C10445D6BF091B3F /* OrbiSoftwareStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C7B34672D14D91BA2C344D /* OrbiSoftwareStitcher.swift */; };
+		8F049458CD23415782C1F4DF /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444A36ADDAB84DBA87775D40 /* AppViewModel.swift */; };
+		91EAB280B9AA4DF599B12E2D /* OrbiProjection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A42DB6B41AF452DA44D7259 /* OrbiProjection.swift */; };
+		9F97E04DCBFC4CB99BC6AF5B /* splashscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 04EEB038C9384D0CA8EA8481 /* splashscreen.png */; };
+		A004C2F0224E409D81A89B47 /* OrbiServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C90FDCC318346149E2595BA /* OrbiServices.swift */; };
+		A1B2C3D4E5F6A1B2C3D4E5F6 /* OrbiModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A1B2C3D4E5F6A1 /* OrbiModelsTests.swift */; };
+		A1B2C3D4E5F6A1B2C3D4E5F7 /* NFSClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A1B2C3D4E5F6A2 /* NFSClientTests.swift */; };
+		A3B4C5D6E7F8A9B0C1D2E3F4 /* OrbiLivePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C5D6E7F8A9B0C1D2E3F4A5 /* OrbiLivePreviewView.swift */; };
+		BDB4070443434B38BB02E951 /* OrbiMP4Inspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AD0B5A0DCF4861B37718C8 /* OrbiMP4Inspector.swift */; };
+		C3D4E5F6A1B2C3D4E5F6A1B2 /* OrbiProjectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A1B2C3D4E5F6A1B2C3 /* OrbiProjectionTests.swift */; };
+		C7033E1394F5459A99C4F353 /* OrbiMetalVideoStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D011FB5E5E76462EBBD1E2AE /* OrbiMetalVideoStitcher.swift */; };
+		C883D00C89FB4FC985397070 /* OrbiVideoStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F8969973D1C4297AD5410DD /* OrbiVideoStitcher.swift */; };
+		E1F2A3B4C5D6E7F8A9B0C1D2 /* Orbi360PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A3B4C5D6E7F8A9B0C1D2E3 /* Orbi360PlayerView.swift */; };
+		E5F6A1B2C3D4E5F6A1B2C3D4 /* OrbiRawBundleParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A1B2C3D4E5F6A1B2C3D4E5 /* OrbiRawBundleParserTests.swift */; };
+		ED4461849C504202AF87A1A8 /* OrbiRawBundleParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B646AC11B24EAD96FBA53B /* OrbiRawBundleParser.swift */; };
+		EE49AC918AFC4C0A80B15858 /* OrbiStitchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB12395BDDA421CBF7DA956 /* OrbiStitchService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7A8B9C0D1E2F3A4B5C6D7E8F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 52BDA61DF8454B0987E71D47 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 14E1CA010E09436EB304B6AA;
+			remoteInfo = Orbi360iOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		04EEB038C9384D0CA8EA8481 /* splashscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = splashscreen.png; sourceTree = "<group>"; };
+		05392A09638C4CB99F384D59 /* stitchcore_compat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stitchcore_compat.c; sourceTree = "<group>"; };
+		0F8969973D1C4297AD5410DD /* OrbiVideoStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiVideoStitcher.swift; sourceTree = "<group>"; };
+		245833F7B4E5422EB6E1F77B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		28B646AC11B24EAD96FBA53B /* OrbiRawBundleParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiRawBundleParser.swift; sourceTree = "<group>"; };
+		2C90FDCC318346149E2595BA /* OrbiServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiServices.swift; sourceTree = "<group>"; };
+		2EB12395BDDA421CBF7DA956 /* OrbiStitchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiStitchService.swift; sourceTree = "<group>"; };
+		3A42DB6B41AF452DA44D7259 /* OrbiProjection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiProjection.swift; sourceTree = "<group>"; };
+		43A93A350F074F6994EB1708 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		43AD0B5A0DCF4861B37718C8 /* OrbiMP4Inspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiMP4Inspector.swift; sourceTree = "<group>"; };
+		444A36ADDAB84DBA87775D40 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		4B2175355BBF4499BDA82336 /* MediaThumbnailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaThumbnailService.swift; sourceTree = "<group>"; };
+		4F9E511CCF7A40AB9740EADC /* OrbiVideoPreviewExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiVideoPreviewExporter.swift; sourceTree = "<group>"; };
+		56619EBDD3BB48C69B79FBC3 /* stitchcore_compat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stitchcore_compat.h; sourceTree = "<group>"; };
+		596E87F2A1E144BD8C6A512F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		69C7B34672D14D91BA2C344D /* OrbiSoftwareStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiSoftwareStitcher.swift; sourceTree = "<group>"; };
+		6EC361BB54D649398227BA89 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		9D2193E0F0AD41E481FF739F /* OrbiCoreImageVideoStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiCoreImageVideoStitcher.swift; sourceTree = "<group>"; };
+		9FAC0F1360094EE4B8384FC9 /* OrbiModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiModels.swift; sourceTree = "<group>"; };
+		A551F942F52B40A59713540B /* NFSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFSClient.swift; sourceTree = "<group>"; };
+		B1F5CF1A320148EB8B928B5E /* Orbi360App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orbi360App.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6A1B2C3D4E5F6A1 /* OrbiModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiModelsTests.swift; sourceTree = "<group>"; };
+		B2C3D4E5F6A1B2C3D4E5F6A2 /* NFSClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFSClientTests.swift; sourceTree = "<group>"; };
+		B4C5D6E7F8A9B0C1D2E3F4A5 /* OrbiLivePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiLivePreviewView.swift; sourceTree = "<group>"; };
+		D011FB5E5E76462EBBD1E2AE /* OrbiMetalVideoStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiMetalVideoStitcher.swift; sourceTree = "<group>"; };
+		D4E5F6A1B2C3D4E5F6A1B2C3 /* OrbiProjectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiProjectionTests.swift; sourceTree = "<group>"; };
+		F2A3B4C5D6E7F8A9B0C1D2E3 /* Orbi360PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orbi360PlayerView.swift; sourceTree = "<group>"; };
+		F64F340B24AE4937A410CB7D /* Orbi360iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Orbi360iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6A1B2C3D4E5F6A1B2C3D4E5 /* OrbiRawBundleParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbiRawBundleParserTests.swift; sourceTree = "<group>"; };
+		FEB803980E3E445389899E54 /* Orbi360iOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Orbi360iOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		FF1E2A3B4C5D6E7F8A9B0C1D /* Orbi360iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Orbi360iOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D5E6F7A8B9C0D1E2F3A4B5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C68A12EA4FE3428580BEEE70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0BE7127A031A47B59DB87B75 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2C90FDCC318346149E2595BA /* OrbiServices.swift */,
+				A551F942F52B40A59713540B /* NFSClient.swift */,
+				4B2175355BBF4499BDA82336 /* MediaThumbnailService.swift */,
+				2EB12395BDDA421CBF7DA956 /* OrbiStitchService.swift */,
+				28B646AC11B24EAD96FBA53B /* OrbiRawBundleParser.swift */,
+				43AD0B5A0DCF4861B37718C8 /* OrbiMP4Inspector.swift */,
+				4F9E511CCF7A40AB9740EADC /* OrbiVideoPreviewExporter.swift */,
+				3A42DB6B41AF452DA44D7259 /* OrbiProjection.swift */,
+				0F8969973D1C4297AD5410DD /* OrbiVideoStitcher.swift */,
+				9D2193E0F0AD41E481FF739F /* OrbiCoreImageVideoStitcher.swift */,
+				D011FB5E5E76462EBBD1E2AE /* OrbiMetalVideoStitcher.swift */,
+				69C7B34672D14D91BA2C344D /* OrbiSoftwareStitcher.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		1A2B3C4D5E6F7A8B9C0D1E2F /* Orbi360iOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				B2C3D4E5F6A1B2C3D4E5F6A1 /* OrbiModelsTests.swift */,
+				D4E5F6A1B2C3D4E5F6A1B2C3 /* OrbiProjectionTests.swift */,
+				F6A1B2C3D4E5F6A1B2C3D4E5 /* OrbiRawBundleParserTests.swift */,
+				B2C3D4E5F6A1B2C3D4E5F6A2 /* NFSClientTests.swift */,
+			);
+			path = Orbi360iOSTests;
+			sourceTree = "<group>";
+		};
+		54EB0E8985734D56B04C7264 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				04EEB038C9384D0CA8EA8481 /* splashscreen.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5F15CA0E1C2F479FB72DCF36 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				9FAC0F1360094EE4B8384FC9 /* OrbiModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7A2EFC7DF42A43AFA0C4E8C9 /* Orbi360iOS */ = {
+			isa = PBXGroup;
+			children = (
+				CA7DB7A27A4F441F997EB408 /* App */,
+				5F15CA0E1C2F479FB72DCF36 /* Models */,
+				0BE7127A031A47B59DB87B75 /* Services */,
+				BAF8E9FA81C0417D9A15F1FE /* ViewModels */,
+				954A473DDFA84727B199FAFD /* Views */,
+				C78D21C5FC894F17A2ABAD82 /* Native */,
+				54EB0E8985734D56B04C7264 /* Resources */,
+				245833F7B4E5422EB6E1F77B /* Assets.xcassets */,
+				FEB803980E3E445389899E54 /* Orbi360iOS-Bridging-Header.h */,
+				596E87F2A1E144BD8C6A512F /* Info.plist */,
+			);
+			path = Orbi360iOS;
+			sourceTree = "<group>";
+		};
+		8C5EFEF561694D90B90028D7 = {
+			isa = PBXGroup;
+			children = (
+				7A2EFC7DF42A43AFA0C4E8C9 /* Orbi360iOS */,
+				1A2B3C4D5E6F7A8B9C0D1E2F /* Orbi360iOSTests */,
+				9745259A5D4C4F29A60023DE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		954A473DDFA84727B199FAFD /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6EC361BB54D649398227BA89 /* RootView.swift */,
+				F2A3B4C5D6E7F8A9B0C1D2E3 /* Orbi360PlayerView.swift */,
+				B4C5D6E7F8A9B0C1D2E3F4A5 /* OrbiLivePreviewView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9745259A5D4C4F29A60023DE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F64F340B24AE4937A410CB7D /* Orbi360iOS.app */,
+				FF1E2A3B4C5D6E7F8A9B0C1D /* Orbi360iOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BAF8E9FA81C0417D9A15F1FE /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				444A36ADDAB84DBA87775D40 /* AppViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C78D21C5FC894F17A2ABAD82 /* Native */ = {
+			isa = PBXGroup;
+			children = (
+				05392A09638C4CB99F384D59 /* stitchcore_compat.c */,
+				56619EBDD3BB48C69B79FBC3 /* stitchcore_compat.h */,
+				43A93A350F074F6994EB1708 /* README.md */,
+			);
+			path = Native;
+			sourceTree = "<group>";
+		};
+		CA7DB7A27A4F441F997EB408 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B1F5CF1A320148EB8B928B5E /* Orbi360App.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		14E1CA010E09436EB304B6AA /* Orbi360iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA5CE493C489454AA69ABB87 /* Build configuration list for PBXNativeTarget "Orbi360iOS" */;
+			buildPhases = (
+				64A18A0EB68B4D17B2C88B14 /* Sources */,
+				C68A12EA4FE3428580BEEE70 /* Frameworks */,
+				39764221DDFC4461B1843B5F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Orbi360iOS;
+			productName = Orbi360iOS;
+			productReference = F64F340B24AE4937A410CB7D /* Orbi360iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F1A2B3C4D5E6F7A8B9C0D1E2F /* Orbi360iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3F4E5D6C7B8A990817263540 /* Build configuration list for PBXNativeTarget "Orbi360iOSTests" */;
+			buildPhases = (
+				2B3C4D5E6F7A8B9C0D1E2F3A /* Sources */,
+				4D5E6F7A8B9C0D1E2F3A4B5C /* Frameworks */,
+				6F7A8B9C0D1E2F3A4B5C6D7E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E6F7A8B9C0D1E2F3A4B5C6D /* PBXTargetDependency */,
+			);
+			name = Orbi360iOSTests;
+			productName = Orbi360iOSTests;
+			productReference = FF1E2A3B4C5D6E7F8A9B0C1D /* Orbi360iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		52BDA61DF8454B0987E71D47 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					14E1CA010E09436EB304B6AA = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 9084B32D648F4136A3DFC7BE /* Build configuration list for PBXProject "Orbi360iOS" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 8C5EFEF561694D90B90028D7;
+			productRefGroup = 9745259A5D4C4F29A60023DE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				14E1CA010E09436EB304B6AA /* Orbi360iOS */,
+				F1A2B3C4D5E6F7A8B9C0D1E2F /* Orbi360iOSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		39764221DDFC4461B1843B5F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				06609D4C9CAE403F947184AF /* Assets.xcassets in Resources */,
+				9F97E04DCBFC4CB99BC6AF5B /* splashscreen.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F7A8B9C0D1E2F3A4B5C6D7E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B3C4D5E6F7A8B9C0D1E2F3A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F6A1B2C3D4E5F6 /* OrbiModelsTests.swift in Sources */,
+				C3D4E5F6A1B2C3D4E5F6A1B2 /* OrbiProjectionTests.swift in Sources */,
+				E5F6A1B2C3D4E5F6A1B2C3D4 /* OrbiRawBundleParserTests.swift in Sources */,
+				A1B2C3D4E5F6A1B2C3D4E5F7 /* NFSClientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64A18A0EB68B4D17B2C88B14 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12C94D879E594A44A6EFA150 /* Orbi360App.swift in Sources */,
+				77363A84B4914DC89C1FB915 /* RootView.swift in Sources */,
+				2BBF7222AEA54D10815B4606 /* OrbiModels.swift in Sources */,
+				A004C2F0224E409D81A89B47 /* OrbiServices.swift in Sources */,
+				1BAD8C5E8D9440E186D33D80 /* NFSClient.swift in Sources */,
+				084039837E7442F6AF5453B8 /* MediaThumbnailService.swift in Sources */,
+				EE49AC918AFC4C0A80B15858 /* OrbiStitchService.swift in Sources */,
+				ED4461849C504202AF87A1A8 /* OrbiRawBundleParser.swift in Sources */,
+				BDB4070443434B38BB02E951 /* OrbiMP4Inspector.swift in Sources */,
+				4D1882B6470148E997430186 /* OrbiVideoPreviewExporter.swift in Sources */,
+				91EAB280B9AA4DF599B12E2D /* OrbiProjection.swift in Sources */,
+				C883D00C89FB4FC985397070 /* OrbiVideoStitcher.swift in Sources */,
+				481507E910A64C6581DF3F51 /* OrbiCoreImageVideoStitcher.swift in Sources */,
+				C7033E1394F5459A99C4F353 /* OrbiMetalVideoStitcher.swift in Sources */,
+				7E3BC889C10445D6BF091B3F /* OrbiSoftwareStitcher.swift in Sources */,
+				8F049458CD23415782C1F4DF /* AppViewModel.swift in Sources */,
+				307D4B5DA8A1496AACC7D8B3 /* stitchcore_compat.c in Sources */,
+				E1F2A3B4C5D6E7F8A9B0C1D2 /* Orbi360PlayerView.swift in Sources */,
+				A3B4C5D6E7F8A9B0C1D2E3F4 /* OrbiLivePreviewView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5E6F7A8B9C0D1E2F3A4B5C6D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 14E1CA010E09436EB304B6AA /* Orbi360iOS */;
+			targetProxy = 7A8B9C0D1E2F3A4B5C6D7E8F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		548AA021F2634A37B6DF3762 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8A9B0C1D2E3F4A5B6C7D8E9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orbi.orbi360.ios.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Orbi360iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Orbi360iOS";
+			};
+			name = Debug;
+		};
+		9B0C1D2E3F4A5B6C7D8E9F0A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orbi.orbi360.ios.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Orbi360iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Orbi360iOS";
+			};
+			name = Release;
+		};
+		9D297F59264641E288F57BE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 8C6YTA6N8Q;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Orbi360iOS/Info.plist;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orbi.orbi360.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Orbi360iOS/Orbi360iOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A9BC282FA78F4521832C6090 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 8C6YTA6N8Q;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Orbi360iOS/Info.plist;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.orbi.orbi360.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Orbi360iOS/Orbi360iOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DFD2C19344C649499A899C6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3F4E5D6C7B8A990817263540 /* Build configuration list for PBXNativeTarget "Orbi360iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A9B0C1D2E3F4A5B6C7D8E9F /* Debug */,
+				9B0C1D2E3F4A5B6C7D8E9F0A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9084B32D648F4136A3DFC7BE /* Build configuration list for PBXProject "Orbi360iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				548AA021F2634A37B6DF3762 /* Debug */,
+				DFD2C19344C649499A899C6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EA5CE493C489454AA69ABB87 /* Build configuration list for PBXNativeTarget "Orbi360iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9D297F59264641E288F57BE0 /* Debug */,
+				A9BC282FA78F4521832C6090 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 52BDA61DF8454B0987E71D47 /* Project object */;
+}
