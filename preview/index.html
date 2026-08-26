@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ORBI 360 - 预览</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Segoe UI',sans-serif; background:linear-gradient(135deg,#0a0a1a,#1a1a2e); display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.phone-frame { width:375px; height:812px; background:#000; border-radius:44px; overflow:hidden; position:relative; box-shadow:0 0 80px rgba(0,164,211,0.2),0 20px 80px rgba(0,0,0,0.6); border:3px solid #2a2a3a; display:flex; flex-direction:column; }
+.status-bar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; color:#fff; font-size:14px; font-weight:600; position:relative; z-index:100; }
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:150px; height:28px; background:#000; border-radius:0 0 16px 16px; z-index:200; }
+.content { flex:1; overflow:hidden; position:relative; }
+.screen { position:absolute; inset:0; display:none; flex-direction:column; }
+.screen.active { display:flex; }
+.bottom-nav { height:54px; display:flex; background:rgba(255,255,255,0.06); backdrop-filter:blur(40px); -webkit-backdrop-filter:blur(40px); border-top:0.5px solid rgba(255,255,255,0.08); }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; transition:all .2s; }
+.nav-item span { font-size:10px; font-weight:500; }
+.nav-item.active { color:#00a4d3; }
+.nav-item:not(.active) { color:rgba(255,255,255,0.35); }
+.orbi-primary { color:#00a4d3; }
+.shoot-tabs { height:52px; display:flex; background:rgba(255,255,255,0.06); backdrop-filter:blur(40px); -webkit-backdrop-filter:blur(40px); border-bottom:0.5px solid rgba(255,255,255,0.06); }
+.shoot-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; position:relative; font-size:12px; }
+.shoot-tab.active { color:#00a4d3; }
+.shoot-tab.active::after { content:''; position:absolute; bottom:0; width:28px; height:3px; border-radius:2px; background:#00a4d3; }
+.shoot-tab:not(.active) { color:rgba(255,255,255,0.35); }
+.lobby { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3 0%,#006b8f 100%); position:relative; }
+.lobby-card { width:288px; background:rgba(255,255,255,0.97); border-radius:20px; padding:24px; display:flex; flex-direction:column; gap:14px; box-shadow:0 20px 50px rgba(0,0,0,0.25); margin-bottom:50px; }
+.lobby-title { font-size:18px; font-weight:600; color:#242527; }
+.lobby-desc { font-size:13px; color:#6b6b6b; line-height:1.5; }
+.lobby-step { display:flex; align-items:center; gap:8px; font-size:13px; color:#242527; }
+.lobby-btn { background:#00a4d3; color:#fff; border:none; border-radius:12px; padding:14px; font-size:16px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:4px; }
+.photo-mode { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3,#006b8f); color:#fff; gap:8px; }
+.shutter-btn { width:78px; height:78px; border-radius:50%; border:4px solid #fff; background:#fff; cursor:pointer; margin-top:20px; margin-bottom:70px; transition:all .15s; position:relative; }
+.shutter-btn::after { content:''; position:absolute; inset:8px; border-radius:50%; background:linear-gradient(135deg,#00a4d3,#006b8f); }
+.shutter-btn:active { transform:scale(0.92); }
+.video-mode { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3,#006b8f); color:#fff; gap:8px; padding-top:80px; }
+.rec-btn { width:78px; height:78px; border-radius:50%; border:4px solid #fff; background:transparent; cursor:pointer; margin-top:20px; margin-bottom:70px; display:flex; align-items:center; justify-content:center; transition:all .15s; }
+.rec-btn:active { transform:scale(0.92); }
+.rec-square { width:30px; height:30px; border-radius:8px; background:#ef4444; }
+.live-preview { flex:1; position:relative; background:#000; overflow:hidden; }
+.live-canvas { width:100%; height:100%; display:block; }
+.live-overlay { position:absolute; inset:0; pointer-events:none; }
+.live-badge { background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px; }
+.live-dot { width:8px; height:8px; border-radius:50%; background:#ef4444; animation:pulse 1s infinite; }
+.live-dot.idle { background:#666; animation:none; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.live-start-btn { background:#00a4d3; color:#fff; border:none; border-radius:25px; padding:12px 28px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; pointer-events:auto; }
+.live-start-btn.active { background:rgba(239,68,68,0.8); }
+.compass-btn { background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); border:none; color:#fff; font-size:18px; border-radius:50%; width:34px; height:34px; cursor:pointer; }
+.media-header { height:50px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:#00a4d3; }
+.media-tabs { display:flex; background:#00a4d3; }
+.media-tab { flex:1; text-align:center; padding:10px 0; color:#fff; font-size:13px; font-weight:600; position:relative; cursor:pointer; }
+.media-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:rgba(255,255,255,0.8); }
+.media-grid { flex:1; overflow-y:auto; padding:10px 6px; background:rgba(0,0,0,0.9); }
+.media-grid-inner { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; }
+.media-item { aspect-ratio:1; border-radius:8px; overflow:hidden; cursor:pointer; position:relative; display:flex; align-items:center; justify-content:center; }
+.media-item .duration { position:absolute; bottom:2px; left:3px; font-size:9px; color:#fff; background:rgba(0,0,0,0.6); padding:1px 4px; border-radius:3px; }
+.settings-scroll { flex:1; overflow-y:auto; background:rgba(0,0,0,0.95); }
+.settings-section { margin-bottom:8px; }
+.settings-header { padding:16px 16px 6px; font-size:12px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px; }
+.settings-card { background:rgba(255,255,255,0.06); }
+.settings-row { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:0.5px solid rgba(255,255,255,0.06); }
+.settings-row:last-child { border-bottom:none; }
+.settings-label { font-size:15px; color:#fff; }
+.settings-value { font-size:14px; color:rgba(255,255,255,0.4); }
+.toggle { width:51px; height:31px; border-radius:16px; background:#34c759; position:relative; cursor:pointer; }
+.toggle::after { content:''; position:absolute; top:2px; right:2px; width:27px; height:27px; border-radius:50%; background:#fff; transition:.2s; }
+.toggle.off { background:rgba(255,255,255,0.15); }
+.toggle.off::after { transform:translateX(-20px); }
+.player-screen { flex:1; position:relative; background:#000; overflow:hidden; }
+.player-canvas { width:100%; height:100%; display:block; cursor:grab; }
+.player-canvas:active { cursor:grabbing; }
+.fade-in { animation:fadeIn .3s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+.toast { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.75); backdrop-filter:blur(20px); color:#fff; padding:14px 28px; border-radius:14px; font-size:15px; z-index:9999; animation:fadeIn .2s; }
+</style>
+</head>
+<body>
+<div class="phone-frame">
+<div class="notch"></div>
+<div class="status-bar"><span id="statusTime">9:41</span><div style="display:flex;gap:5px;align-items:center;"><svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx=".5"/><rect x="4" y="5" width="3" height="7" rx=".5"/><rect x="8" y="2" width="3" height="10" rx=".5"/><rect x="12" y="0" width="3" height="12" rx=".5" opacity=".3"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="1" width="20" height="10" rx="2.5"/><rect x="2" y="2.5" width="16" height="7" rx="1" fill="currentColor"/><rect x="21.5" y="4" width="1.5" height="4" rx=".5" fill="currentColor"/></svg></div></div>
+<div class="content">
+<!-- 拍摄 -->
+<div class="screen active" id="screen-shoot">
+<div class="shoot-tabs"><div class="shoot-tab active" data-mode="photo" onclick="switchShootMode('photo')"><span>📷</span><span>拍照</span></div><div class="shoot-tab" data-mode="live" onclick="switchShootMode('live')"><span>📡</span><span>实时</span></div><div class="shoot-tab" data-mode="video" onclick="switchShootMode('video')"><span>🎬</span><span>录像</span></div></div>
+<div class="lobby" id="lobbyView"><div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;"><div style="font-size:56px;">🥽</div><div style="font-size:28px;font-weight:700;color:#fff;">ORBI 360</div><div style="font-size:15px;color:rgba(255,255,255,0.7);">智能眼镜</div></div><div class="lobby-card fade-in"><div style="font-size:18px;font-weight:600;color:#242527;">连接设备</div><div style="font-size:13px;color:#6b6b6b;line-height:1.5;">请在手机 WiFi 设置中选择眼镜热点 SSID 并输入密码连接</div><div class="lobby-step"><span style="color:#00a4d3;font-size:16px;">①</span> 打开手机 WiFi 设置</div><div class="lobby-step"><span style="color:#00a4d3;font-size:16px;">②</span> 选择 ORBI_360 热点</div><div class="lobby-step"><span style="color:#00a4d3;font-size:16px;">③</span> 返回 App 点击连接</div><button class="lobby-btn" onclick="connectDevice()">📡 连接</button></div></div>
+<div class="photo-mode" id="photoMode" style="display:none;"><div style="font-size:72px;opacity:0.8;">📷</div><div style="font-size:44px;font-weight:bold;">1, 2...</div><div style="font-size:18px;opacity:0.8;">拍照！</div><div style="flex:1;"></div><button class="shutter-btn" onclick="capturePhoto()"></button></div>
+<div class="live-preview" id="liveMode" style="display:none;"><canvas class="live-canvas" id="liveCanvas"></canvas><div class="live-overlay"><div style="position:absolute;top:50px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;"><div class="live-badge"><div class="live-dot idle" id="liveDot"></div><span style="color:#fff;font-size:12px;font-weight:bold;" id="liveStatus">待机</span></div><div style="display:flex;gap:8px;align-items:center;"><span id="frameCounter" style="color:rgba(255,255,255,0.6);font-size:11px;display:none;">0 帧</span><button class="compass-btn" onclick="resetView()">🧭</button></div></div><div id="liveStartOverlay" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,0.5);"><div style="font-size:48px;">🔭</div><div style="font-size:17px;font-weight:600;color:#fff;margin-top:8px;">实时预览</div><div style="font-size:13px;margin-top:4px;">点击开始连接眼镜预览画面</div></div><div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.5));display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:auto;"><button class="live-start-btn" id="liveBtn" onclick="toggleLive()"><span id="liveBtnIcon">▶</span> <span id="liveBtnText">开始</span></button><span id="connStatus" style="color:rgba(255,255,255,0.7);font-size:12px;display:none;">连接中…</span></div></div></div>
+<div class="video-mode" id="videoMode" style="display:none;"><div style="font-size:64px;opacity:0.8;" id="videoIcon">🎬</div><div style="font-size:44px;font-weight:bold;" id="videoCount">1, 2...</div><div style="font-size:18px;opacity:0.8;" id="videoText">录像！</div><div style="flex:1;"></div><button class="rec-btn" onclick="toggleRecord()"><div class="rec-square" style="border-radius:50%;background:#ef4444;width:36px;height:36px;"></div></button></div>
+<div id="shootOverlay" style="display:none;position:absolute;top:0;left:0;right:0;padding:14px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;"><span class="live-badge" style="font-size:16px;">🔋</span><span class="live-badge" style="font-size:12px;" id="remainingText">可录: 05:00:00</span></div>
+</div>
+<!-- 媒体 -->
+<div class="screen" id="screen-media"><div class="media-header"><select class="live-badge" style="border:none;outline:none;font-size:14px;" id="mediaSource" onchange="switchMediaSource()"><option value="glasses">眼镜</option><option value="phone">手机</option></select><button style="color:#fff;font-size:18px;cursor:pointer;background:none;border:none;" onclick="toggleMediaLayout()" id="mediaToggle">☰</button></div><div class="media-tabs"><div class="media-tab active">照片</div><div class="media-tab">视频</div></div><div class="media-grid" id="mediaGrid"><div class="media-grid-inner" id="mediaGridInner"></div></div></div>
+<!-- 360播放器 -->
+<div class="screen" id="screen-player"><div class="player-screen"><canvas class="player-canvas" id="playerCanvas"></canvas><div id="playerTop" style="position:absolute;top:50px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(rgba(0,0,0,0.5),transparent);padding:16px;margin:-16px;"><span style="color:#fff;font-size:17px;font-weight:600;">360° 全景</span><button class="compass-btn" onclick="resetPlayerView()">🧭</button></div><div id="playerBottom" style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:linear-gradient(transparent,rgba(0,0,0,0.5));"><div style="display:flex;align-items:center;gap:8px;height:30px;"><span style="color:#fff;font-size:11px;min-width:35px;" id="currentTime">0:00</span><input type="range" min="0" max="126" value="0" id="seekBar" oninput="seekVideo(this.value)" style="flex:1;accent-color:#00a4d3;"><span style="color:#fff;font-size:11px;min-width:35px;" id="durationTime">2:06</span></div><div style="display:flex;justify-content:center;gap:50px;margin-top:12px;"><button style="color:#fff;font-size:24px;cursor:pointer;background:none;border:none;" onclick="seekRel(-10)">⏪</button><button style="color:#fff;font-size:40px;cursor:pointer;background:none;border:none;" id="playPauseBtn" onclick="togglePlay()">⏸</button><button style="color:#fff;font-size:24px;cursor:pointer;background:none;border:none;" onclick="seekRel(10)">⏩</button></div></div></div></div>
+<!-- 设置 -->
+<div class="screen" id="screen-settings"><div style="background:#00a4d3;padding-top:10px;text-align:center;padding-bottom:8px;"><span style="color:#fff;font-size:17px;font-weight:600;">设置</span></div><div class="settings-scroll"><div class="settings-section"><div class="settings-header">设备</div><div class="settings-card"><div class="settings-row"><span class="settings-label">固件版本</span><span class="settings-value">1.5.1</span></div><div class="settings-row"><span class="settings-label">运行模式</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div><div class="settings-row"><span style="color:#ef4444;" class="settings-label">格式化 SD 卡</span></div></div></div><div class="settings-section"><div class="settings-header">WiFi 设置</div><div class="settings-card"><div class="settings-row"><span class="settings-label">名称</span><span class="settings-value">ORBI_360</span></div><div class="settings-row"><span class="settings-label">密码</span><span class="settings-value">••••••••</span></div><div class="settings-row"><span class="settings-label">确认密码</span><span class="settings-value">••••••••</span></div><div class="settings-row"><span style="color:#00a4d3;">保存</span></div></div></div><div class="settings-section"><div class="settings-header">技术支持</div><div class="settings-card"><div class="settings-row"><span style="color:rgba(255,255,255,0.4);">邮箱地址</span></div><div class="settings-row"><span style="color:rgba(255,255,255,0.4);">请描述您的问题…</span></div><div class="settings-row"><span style="color:#00a4d3;">发送报告</span></div></div></div><div class="settings-section"><div class="settings-header">法律信息</div><div class="settings-card"><div class="settings-row"><span style="color:#00a4d3;">条款与条件</span><span style="color:rgba(255,255,255,0.2);">›</span></div><div class="settings-row"><span style="color:#00a4d3;">隐私政策</span><span style="color:rgba(255,255,255,0.2);">›</span></div></div></div><div style="height:20px;"></div></div></div>
+</div>
+<div class="bottom-nav"><div class="nav-item active" data-tab="shoot" onclick="switchTab('shoot')"><span>📷</span><span>拍摄</span></div><div class="nav-item" data-tab="media" onclick="switchTab('media')"><span>🖼</span><span>媒体</span></div><div class="nav-item" data-tab="settings" onclick="switchTab('settings')"><span>⚙</span><span>设置</span></div></div>
+</div>
+<script>
+let isConnected=!1,isLiveOn=!1,isRecording=!1,recSeconds=0,recTimer=null,playerTime=0,playerPlaying=!0,playerTimer=null,mediaLayout='grid',mediaSource='glasses';let liveYaw=0,livePitch=0,liveFov=90,playerYaw=0,playerPitch=0,playerFov=75;let liveCanvas,liveCtx,liveAnim,liveDrag=!1,liveLastX=0,liveLastY=0,liveFrameCount=0;let playerCanvas,playerCtx,playerAnim,playerDrag=!1,playerLastX=0,playerLastY=0;
+function updateTime(){const d=new Date();document.getElementById('statusTime').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}updateTime();setInterval(updateTime,1e3);
+function switchTab(t){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+t).classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.tab===t));if(t==='media')renderMedia()}
+function showLobby(){document.getElementById('lobbyView').style.display='flex';document.getElementById('photoMode').style.display='none';document.getElementById('liveMode').style.display='none';document.getElementById('videoMode').style.display='none';document.getElementById('shootOverlay').style.display='none'}
+function switchShootMode(m){document.querySelectorAll('.shoot-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));if(!isConnected){showLobby();return}document.getElementById('lobbyView').style.display='none';document.getElementById('photoMode').style.display=m==='photo'?'flex':'none';document.getElementById('liveMode').style.display=m==='live'?'flex':'none';document.getElementById('videoMode').style.display=m==='video'?'flex':'none';document.getElementById('shootOverlay').style.display='flex';if(m==='live')startLiveDemo();else stopLiveDemo()}
+function connectDevice(){document.getElementById('lobbyView').innerHTML='<div style="flex:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00a4d3,#006b8f);color:#fff;flex-direction:column;gap:12px;"><div style="font-size:40px;animation:spin 1s linear infinite;">⟳</div><div style="font-size:16px;">正在连接 ORBI 360...</div><div style="font-size:12px;opacity:0.7;">192.168.2.1:8080</div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';setTimeout(()=>{isConnected=!0;switchShootMode('photo')},2e3)}
+function capturePhoto(){showToast('拍摄完成！')}
+function toggleRecord(){isRecording=!isRecording;const btn=document.querySelector('.rec-btn');const icon=document.getElementById('videoIcon');const count=document.getElementById('videoCount');const text=document.getElementById('videoText');if(isRecording){btn.innerHTML='<div class="rec-square"></div>';icon.style.display='none';count.textContent='00:00';text.textContent='录像中';recSeconds=0;recTimer=setInterval(()=>{recSeconds++;count.textContent=String(Math.floor(recSeconds/60)).padStart(2,'0')+':'+String(recSeconds%60).padStart(2,'0')},1e3);showToast('正在录像')}else{btn.innerHTML='<div class="rec-square" style="border-radius:50%;width:36px;height:36px;"></div>';icon.style.display='block';icon.textContent='🎬';count.textContent='1, 2...';text.textContent='录像！';clearInterval(recTimer);showToast('视频已保存')}}
+function startLiveDemo(){liveCanvas=document.getElementById('liveCanvas');liveCtx=liveCanvas.getContext('2d');resizeCanvas(liveCanvas);addDrag(liveCanvas,()=>liveYaw,()=>livePitch,(y,p)=>{liveYaw=y;livePitch=p});liveCanvas.addEventListener('wheel',e=>{e.preventDefault();liveFov=Math.max(40,Math.min(120,liveFov+e.deltaY*0.1))});animateLiveDemo()}
+function stopLiveDemo(){if(liveAnim)cancelAnimationFrame(liveAnim);if(isLiveOn)toggleLive()}
+function addDrag(canvas,getY,getY2,setY){let drag=!1,lx=0,ly=0;canvas.addEventListener('mousedown',e=>{drag=!0;lx=e.clientX;ly=e.clientY});canvas.addEventListener('mousemove',e=>{if(!drag)return;let y=getY()+(e.clientX-lx)*0.005;let p=Math.max(-1.5,Math.min(1.5,getY2()+(e.clientY-ly)*0.005));setY(y,p);lx=e.clientX;ly=e.clientY});window.addEventListener('mouseup',()=>drag=!1);canvas.addEventListener('touchstart',e=>{drag=!0;lx=e.touches[0].clientX;ly=e.touches[0].clientY});canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drag)return;let y=getY()+(e.touches[0].clientX-lx)*0.005;let p=Math.max(-1.5,Math.min(1.5,getY2()+(e.touches[0].clientY-ly)*0.005));setY(y,p);lx=e.touches[0].clientX;ly=e.touches[0].clientY});canvas.addEventListener('touchend',()=>drag=!1)}
+function animateLiveDemo(){render360(liveCanvas,liveCtx,()=>liveYaw,()=>livePitch,()=>liveFov,isLiveOn);liveAnim=requestAnimationFrame(animateLiveDemo)}
+function render360(canvas,ctx,getYaw,getPitch,getFov,isLive){const w=canvas.width,h=canvas.height;const imgData=ctx.createImageData(w,h);const data=imgData.data;const t=Date.now()*0.001;const fovRad=getFov()*Math.PI/180;const focal=1/Math.tan(fovRad/2);const aspect=w/h;for(let y=0;y<h;y++){for(let x=0;x<w;x++){const ndcX=(2*(x+0.5)/w-1)*aspect/focal;const ndcY=(1-2*(y+0.5)/h)/focal;let dx=ndcX,dy=ndcY,dz=-1;const yaw=getYaw(),pitch=getPitch();const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);let rx=cy*dx+sy*dz;let ry=sp*sy*dx+cp*dy-sp*cy*dz;let rz=-cp*sy*dx+sp*dy+cp*cy*dz;const len=Math.sqrt(rx*rx+ry*ry+rz*rz);rx/=len;ry/=len;rz/=len;let yawA=Math.atan2(rx,rz);let pitchA=Math.asin(Math.max(-1,Math.min(1,ry)));let u=yawA/(2*Math.PI)+0.5;let v=0.5-pitchA/Math.PI;let r,g,b;if(isLive){const grid=16;const gx=(u*grid)%1,gy=(v*grid)%1;const gl=(gx>0.97||gy>0.97)?0.4:0;r=0.2+0.15*Math.sin(u*8+t*0.3);g=0.35+0.15*Math.sin(v*6+t*0.5);b=0.5+0.1*Math.sin((u+v)*10+t);if(Math.abs(u-0.5)+Math.abs(v-0)<0.03){r=1;g=0.3;b=0.3}if(Math.abs(u-0)+Math.abs(v-0.5)<0.03){r=0.3;g=1;b=0.3}if(Math.abs(u-0.75)+Math.abs(v-0.5)<0.03){r=0.3;g=0.3;b=1}if(Math.abs(u-0.25)+Math.abs(v-0.5)<0.03){r=1;g=1;b=0.3}r=Math.min(1,r+gl);g=Math.min(1,g+gl);b=Math.min(1,b+gl);liveFrameCount++}else{const grid=16;const gx=(u*grid)%1,gy=(v*grid)%1;const gl=(gx>0.96||gy>0.96)?0.3:0;r=0.5+0.3*Math.sin(u*6+t*0.5);g=0.3+0.2*Math.cos(v*4+t*0.3);b=0.6+0.2*Math.sin((u+v)*5+t);r=Math.min(1,r+gl);g=Math.min(1,g+gl);b=Math.min(1,b+gl)}const idx=(y*w+x)*4;data[idx]=r*255;data[idx+1]=g*255;data[idx+2]=b*255;data[idx+3]=255}}ctx.putImageData(imgData,0,0)}
+function toggleLive(){isLiveOn=!isLiveOn;const d=document.getElementById('liveDot'),s=document.getElementById('liveStatus'),b=document.getElementById('liveBtn'),bi=document.getElementById('liveBtnIcon'),bt=document.getElementById('liveBtnText'),o=document.getElementById('liveStartOverlay'),c=document.getElementById('connStatus'),f=document.getElementById('frameCounter');if(isLiveOn){d.classList.remove('idle');s.textContent='直播中';b.classList.add('active');bi.textContent='⏹';bt.textContent='停止';o.style.display='none';c.style.display='inline';c.textContent='连接中…';f.style.display='inline';f.textContent='0 帧';liveFrameCount=0;setTimeout(()=>{c.textContent='已连接'},1500);setInterval(()=>{if(isLiveOn)f.textContent=liveFrameCount+' 帧'},500)}else{d.classList.add('idle');s.textContent='待机';b.classList.remove('active');bi.textContent='▶';bt.textContent='开始';o.style.display='block';c.style.display='none';f.style.display='none'}}
+function resetView(){liveYaw=0;livePitch=0;liveFov=90}
+const mediaData=[{name:'ORBI_0001',type:'photo',size:'4.7 MB',date:'今天',duration:''},{name:'ORBI_0002',type:'video',size:'112.5 MB',date:'2小时前',duration:'0:42'},{name:'ORBI_0003',type:'video',size:'345.3 MB',date:'1天前',duration:'2:06'},{name:'ORBI_0004',type:'photo',size:'5.1 MB',date:'2天前',duration:''},{name:'ORBI_0005',type:'photo',size:'4.9 MB',date:'3天前',duration:''},{name:'ORBI_0006',type:'video',size:'89.2 MB',date:'4天前',duration:'0:33'},{name:'ORBI_0007',type:'photo',size:'4.6 MB',date:'5天前',duration:''},{name:'ORBI_0008',type:'video',size:'201.8 MB',date:'1周前',duration:'1:15'}];
+function renderMedia(){const c=document.getElementById('mediaGridInner');c.innerHTML='';if(mediaSource==='phone'&&mediaData.length>3){mediaData.slice(0,3).forEach(i=>c.appendChild(createMediaItem(i,!0)));c.innerHTML+='<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:rgba(255,255,255,0.3);font-size:13px;">手机上暂无更多媒体<br>请从眼镜传输媒体到手机查看</div>'}else{mediaData.forEach(i=>c.appendChild(createMediaItem(i,mediaSource==='phone')))}}
+function createMediaItem(item,isLocal){const d=document.createElement('div');d.className='media-item';d.style.background=item.type==='photo'?'linear-gradient(135deg,#00a4d3,#006b8f)':'linear-gradient(135deg,#1a1a2e,#0a0a1a)';d.innerHTML='<span style="font-size:24px;">'+(item.type==='photo'?'📷':'🎬')+'</span>';if(item.duration)d.innerHTML+='<span class="duration">'+item.duration+'</span>';if(isLocal)d.innerHTML+='<span style="position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:#34c759;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;">✓</span>';d.onclick=()=>{if(item.type==='video')openPlayer(item);else showToast('照片: '+item.name)};return d}
+function switchMediaSource(){mediaSource=document.getElementById('mediaSource').value;renderMedia()}
+function toggleMediaLayout(){const g=document.getElementById('mediaGridInner'),t=document.getElementById('mediaToggle');if(mediaLayout==='grid'){mediaLayout='list';g.style.gridTemplateColumns='1fr';t.textContent='▦';document.querySelectorAll('.media-item').forEach(i=>{i.style.aspectRatio='auto';i.style.height='64px'})}else{mediaLayout='grid';g.style.gridTemplateColumns='repeat(4,1fr)';t.textContent='☰';renderMedia()}}
+function openPlayer(item){switchTab('player');playerCanvas=document.getElementById('playerCanvas');playerCtx=playerCanvas.getContext('2d');resizeCanvas(playerCanvas);playerTime=0;playerPlaying=!0;document.getElementById('playPauseBtn').textContent='⏸';addDrag(playerCanvas,()=>playerYaw,()=>playerPitch,(y,p)=>{playerYaw=y;playerPitch=p});playerCanvas.addEventListener('wheel',e=>{e.preventDefault();playerFov=Math.max(30,Math.min(110,playerFov+e.deltaY*0.1))});playerCanvas.addEventListener('click',()=>{document.getElementById('playerTop').style.opacity=document.getElementById('playerTop').style.opacity==='0'?'1':'0';document.getElementById('playerBottom').style.opacity=document.getElementById('playerBottom').style.opacity==='0'?'1':'0';document.getElementById('playerTop').style.transition='opacity .2s';document.getElementById('playerBottom').style.transition='opacity .2s'});if(playerTimer)clearInterval(playerTimer);playerTimer=setInterval(()=>{if(playerPlaying){playerTime++;if(playerTime>126)playerTime=0;document.getElementById('currentTime').textContent=formatTime(playerTime);document.getElementById('seekBar').value=playerTime}},1e3);animatePlayer()}
+function animatePlayer(){render360(playerCanvas,playerCtx,()=>playerYaw,()=>playerPitch,()=>playerFov,!0);playerAnim=requestAnimationFrame(animatePlayer)}
+function togglePlay(){playerPlaying=!playerPlaying;document.getElementById('playPauseBtn').textContent=playerPlaying?'⏸':'▶'}
+function seekVideo(v){playerTime=parseInt(v);document.getElementById('currentTime').textContent=formatTime(playerTime)}
+function seekRel(d){playerTime=Math.max(0,Math.min(126,playerTime+d));document.getElementById('currentTime').textContent=formatTime(playerTime);document.getElementById('seekBar').value=playerTime}
+function resetPlayerView(){playerYaw=0;playerPitch=0;playerFov=75}
+function formatTime(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function resizeCanvas(c){const r=c.getBoundingClientRect();c.width=Math.floor(r.width/2);c.height=Math.floor(r.height/2)}
+function showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.querySelector('.phone-frame').appendChild(t);setTimeout(()=>t.remove(),1500)}
+window.addEventListener('resize',()=>{if(liveCanvas)resizeCanvas(liveCanvas);if(playerCanvas)resizeCanvas(playerCanvas)});
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ORBI 360 - Preview</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#1a1a2e; display:flex; justify-content:center; align-items:center; min-height:100vh; }
+.phone-frame {
+  width:375px; height:812px; background:#000; border-radius:44px; overflow:hidden;
+  position:relative; box-shadow:0 0 60px rgba(0,200,255,0.15),0 20px 80px rgba(0,0,0,0.5);
+  border:3px solid #333; display:flex; flex-direction:column;
+}
+.status-bar { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 22px; color:#fff; font-size:14px; font-weight:600; position:relative; z-index:100; }
+.status-bar .time { font-variant-numeric:tabular-nums; }
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:150px; height:28px; background:#000; border-radius:0 0 16px 16px; z-index:200; }
+.content { flex:1; overflow:hidden; position:relative; }
+.screen { position:absolute; inset:0; display:none; flex-direction:column; }
+.screen.active { display:flex; }
+
+/* Bottom Nav */
+.bottom-nav { height:56px; display:flex; background:rgba(255,255,255,0.92); backdrop-filter:blur(20px); border-top:1px solid rgba(0,0,0,0.06); }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; transition:all .2s; }
+.nav-item svg { width:22px; height:22px; stroke-width:1.8; }
+.nav-item span { font-size:10px; font-weight:500; }
+.nav-item.active { color:#00a4d3; }
+.nav-item:not(.active) { color:#999; }
+
+/* Colors */
+.orbi-primary { color:#00a4d3; }
+.orbi-bg { background:linear-gradient(135deg,#00a4d3,#006b8f); }
+
+/* Shoot Screen */
+.shoot-tabs { height:56px; display:flex; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.08); }
+.shoot-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; cursor:pointer; position:relative; font-size:12px; }
+.shoot-tab svg { width:22px; height:22px; stroke-width:1.8; }
+.shoot-tab.active { color:#00a4d3; }
+.shoot-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:#000; }
+.shoot-tab:not(.active) { color:#999; }
+
+/* Connection Lobby */
+.lobby { flex:1; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3 0%,#006b8f 100%); position:relative; }
+.lobby::before { content:''; position:absolute; inset:0; background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><circle cx="200" cy="200" r="120" fill="rgba(255,255,255,0.05)"/></svg>') center/cover; opacity:0.5; }
+.lobby-card { width:280px; min-height:358px; background:#fff; border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:1; box-shadow:0 8px 32px rgba(0,0,0,0.2); }
+.lobby-title { font-size:20px; font-weight:500; color:#242527; }
+.lobby-desc { font-size:14px; color:#242527; line-height:1.4; }
+.lobby-icon { font-size:72px; text-align:center; color:#00a4d3; padding:18px 0; }
+.lobby-btn { background:#00a4d3; color:#fff; border:none; border-radius:10px; padding:14px; font-size:16px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+
+/* Photo Mode */
+.photo-mode { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3,#006b8f); color:#fff; gap:6px; }
+.photo-icon { font-size:90px; opacity:0.9; }
+.photo-count { font-size:48px; font-weight:bold; }
+.photo-text { font-size:18px; }
+.shutter-btn { width:80px; height:80px; border-radius:50%; border:4px solid #fff; background:rgba(255,255,255,0.3); cursor:pointer; margin-top:20px; margin-bottom:60px; transition:all .2s; }
+.shutter-btn:active { transform:scale(0.9); background:rgba(255,255,255,0.6); }
+
+/* Video Mode */
+.video-mode { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#00a4d3,#006b8f); color:#fff; gap:6px; padding-top:80px; }
+.rec-time { font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; }
+.rec-btn { width:80px; height:80px; border-radius:50%; border:4px solid #fff; background:#ff3b30; cursor:pointer; margin-top:20px; margin-bottom:60px; transition:all .2s; }
+.rec-btn:active { transform:scale(0.9); }
+.rec-pulse { width:36px; height:36px; border-radius:8px; background:#ff3b30; }
+
+/* Live Preview */
+.live-preview { flex:1; position:relative; background:#000; overflow:hidden; }
+.live-canvas { width:100%; height:100%; display:block; }
+.live-overlay { position:absolute; inset:0; pointer-events:none; }
+.live-status { position:absolute; top:50px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; }
+.live-badge { background:rgba(0,0,0,0.5); padding:5px 10px; border-radius:20px; display:flex; align-items:center; gap:6px; }
+.live-dot { width:8px; height:8px; border-radius:50%; background:#ff3b30; animation:pulse 1s infinite; }
+.live-dot.idle { background:#888; animation:none; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.live-text { color:#fff; font-size:12px; font-weight:bold; }
+.live-controls { position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent,rgba(0,0,0,0.5)); display:flex; flex-direction:column; align-items:center; gap:12px; pointer-events:auto; }
+.live-start-btn { background:#00a4d3; color:#fff; border:none; border-radius:25px; padding:12px 28px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; }
+.live-start-btn.active { background:rgba(255,59,48,0.8); }
+.compass-btn { background:rgba(0,0,0,0.5); border:none; color:#fff; font-size:20px; border-radius:50%; width:36px; height:36px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* Media */
+.media-header { height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; background:#00a4d3; }
+.media-source { background:rgba(255,255,255,0.2); color:#fff; border:none; border-radius:8px; padding:6px 12px; font-size:14px; }
+.media-toggle { color:#fff; font-size:18px; cursor:pointer; background:none; border:none; }
+.media-tabs { display:flex; background:#00a4d3; }
+.media-tab { flex:1; text-align:center; padding:14px 0; color:#fff; font-size:12px; font-weight:600; position:relative; cursor:pointer; }
+.media-tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:#000; }
+.media-grid { flex:1; overflow-y:auto; padding:8px 4px; background:#f5f5f7; }
+.media-grid-inner { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.media-item { aspect-ratio:1; border-radius:4px; overflow:hidden; cursor:pointer; position:relative; background:#e0e0e0; display:flex; align-items:center; justify-content:center; }
+.media-item svg { width:24px; height:24px; opacity:0.3; }
+.media-item .duration { position:absolute; bottom:2px; left:3px; font-size:9px; color:#fff; background:rgba(0,0,0,0.5); padding:1px 3px; border-radius:2px; }
+.media-item .badge { position:absolute; top:2px; right:2px; width:16px; height:16px; border-radius:50%; background:#00a4d3; display:flex; align-items:center; justify-content:center; }
+
+/* Settings */
+.settings-scroll { flex:1; overflow-y:auto; background:#f5f5f7; }
+.settings-section { margin-bottom:8px; }
+.settings-header { padding:16px 16px 6px; font-size:13px; color:#6b6b6b; text-transform:uppercase; }
+.settings-card { background:#fff; }
+.settings-row { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid rgba(0,0,0,0.05); }
+.settings-row:last-child { border-bottom:none; }
+.settings-label { font-size:16px; color:#1c1c1e; }
+.settings-value { font-size:14px; color:#8e8e93; }
+.toggle { width:51px; height:31px; border-radius:16px; background:#34c759; position:relative; cursor:pointer; transition:background .2s; }
+.toggle::after { content:''; position:absolute; top:2px; right:2px; width:27px; height:27px; border-radius:50%; background:#fff; transition:transform .2s; }
+.toggle.off { background:#e9e9eb; }
+.toggle.off::after { transform:translateX(-20px); }
+.settings-input { flex:1; margin-left:12px; border:none; background:transparent; font-size:16px; outline:none; text-align:right; color:#1c1c1e; }
+.settings-btn { color:#00a4d3; font-size:16px; font-weight:500; cursor:pointer; }
+
+/* 360 Player */
+.player-screen { flex:1; position:relative; background:#000; overflow:hidden; }
+.player-canvas { width:100%; height:100%; display:block; cursor:grab; }
+.player-canvas:active { cursor:grabbing; }
+.player-top { position:absolute; top:50px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(rgba(0,0,0,0.5),transparent); padding:16px; margin:-16px; }
+.player-title { color:#fff; font-size:17px; font-weight:600; }
+.player-bottom { position:absolute; bottom:0; left:0; right:0; padding:16px; background:linear-gradient(transparent,rgba(0,0,0,0.5)); }
+.player-slider { width:100%; height:30px; display:flex; align-items:center; gap:8px; }
+.player-slider input { flex:1; }
+.player-time { color:#fff; font-size:11px; font-variant-numeric:tabular-nums; min-width:35px; }
+.player-buttons { display:flex; justify-content:center; gap:50px; margin-top:12px; }
+.player-btn { color:#fff; font-size:24px; cursor:pointer; background:none; border:none; }
+.player-btn.big { font-size:40px; }
+.player-controls-hidden { opacity:0; pointer-events:none; }
+
+/* Animations */
+.fade-in { animation:fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+/* Demo pattern canvas */
+.demo-info { position:absolute; bottom:80px; left:0; right:0; text-align:center; color:rgba(255,255,255,0.5); font-size:13px; pointer-events:none; }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span class="time" id="statusTime">9:41</span>
+    <div style="display:flex;gap:5px;align-items:center;">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4" y="5" width="3" height="7" rx="0.5"/><rect x="8" y="2" width="3" height="10" rx="0.5"/><rect x="12" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.2 0 4.2 0.8 5.8 2.2l1.2-1.4C13.1 1.6 10.6 0.5 8 0.5S2.9 1.6 1 3.3l1.2 1.4C3.8 3.3 5.8 2.5 8 2.5zM8 6.5c1.1 0 2.1 0.4 2.9 1.1l1.2-1.4C11 5 9.6 4.5 8 4.5S5 5 3.9 6.2l1.2 1.4C5.9 6.9 6.9 6.5 8 6.5zM8 8.5L6 10.5l2 2 2-2-2-2z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="1" width="20" height="10" rx="2.5"/><rect x="2" y="2.5" width="16" height="7" rx="1" fill="currentColor"/><rect x="21.5" y="4" width="1.5" height="4" rx="0.5" fill="currentColor"/></svg>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- SHOOT SCREEN -->
+    <div class="screen active" id="screen-shoot">
+      <div class="shoot-tabs">
+        <div class="shoot-tab active" data-mode="photo" onclick="switchShootMode('photo')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Photo</span>
+        </div>
+        <div class="shoot-tab" data-mode="live" onclick="switchShootMode('live')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Live</span>
+        </div>
+        <div class="shoot-tab" data-mode="video" onclick="switchShootMode('video')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          <span>Video</span>
+        </div>
+      </div>
+
+      <!-- Connection Lobby -->
+      <div class="lobby" id="lobbyView">
+        <div class="lobby-card fade-in">
+          <div class="lobby-title">Connect to Device</div>
+          <div class="lobby-desc">On the smartphone's WiFi setting screen select the glasses SSID and enter the password.</div>
+          <div class="lobby-icon">📡</div>
+          <div style="text-align:right;"><span class="settings-btn">How</span></div>
+          <button class="lobby-btn" onclick="connectDevice()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+            Connect
+          </button>
+        </div>
+      </div>
+
+      <!-- Photo Mode -->
+      <div class="photo-mode" id="photoMode" style="display:none;">
+        <div class="photo-icon">📷</div>
+        <div class="photo-count">1, 2...</div>
+        <div class="photo-text">SNAP!</div>
+        <button class="shutter-btn" onclick="capturePhoto()"></button>
+      </div>
+
+      <!-- Live Preview -->
+      <div class="live-preview" id="liveMode" style="display:none;">
+        <canvas class="live-canvas" id="liveCanvas"></canvas>
+        <div class="live-overlay">
+          <div class="live-status">
+            <div class="live-badge">
+              <div class="live-dot idle" id="liveDot"></div>
+              <span class="live-text" id="liveStatus">IDLE</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span id="frameCounter" style="color:rgba(255,255,255,0.6);font-size:11px;font-variant-numeric:tabular-nums;display:none;">0 frames</span>
+              <button class="compass-btn" onclick="resetView()">🧭</button>
+            </div>
+          </div>
+          <div id="liveStartOverlay" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:rgba(255,255,255,0.5);">
+            <div style="font-size:48px;">🔭</div>
+            <div style="font-size:17px;font-weight:600;color:#fff;margin-top:8px;">Live Preview</div>
+            <div style="font-size:12px;margin-top:4px;">Tap Start to connect to glasses preview stream</div>
+          </div>
+          <div class="live-controls">
+            <button class="live-start-btn" id="liveBtn" onclick="toggleLive()">
+              <span id="liveBtnIcon">▶</span>
+              <span id="liveBtnText">Start</span>
+            </button>
+            <span id="connStatus" style="color:rgba(255,255,255,0.7);font-size:12px;display:none;">Connecting…</span>
+          </div>
+          <div class="demo-info" id="demoInfo" style="display:none;">Demo Mode — Procedural 360° Test Pattern</div>
+        </div>
+      </div>
+
+      <!-- Video Mode -->
+      <div class="video-mode" id="videoMode" style="display:none;">
+        <div class="photo-icon">📹</div>
+        <div class="photo-count">1, 2...</div>
+        <div class="photo-text">RECORD!</div>
+        <button class="rec-btn" onclick="toggleRecord()"></button>
+      </div>
+
+      <!-- Shoot Overlay Status -->
+      <div id="shootOverlay" style="display:none;position:absolute;top:0;left:0;right:0;padding:14px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;">
+        <span style="color:#fff;font-size:20px;">🔋</span>
+        <span style="color:#fff;font-size:12px;" id="remainingText">Remaining time: 05:00:00</span>
+      </div>
+    </div>
+
+    <!-- MEDIA SCREEN -->
+    <div class="screen" id="screen-media">
+      <div class="media-header">
+        <select class="media-source" id="mediaSource" onchange="switchMediaSource()">
+          <option value="glasses">Glasses</option>
+          <option value="phone">On Phone</option>
+        </select>
+        <button class="media-toggle" onclick="toggleMediaLayout()" id="mediaToggle">☰</button>
+      </div>
+      <div class="media-tabs">
+        <div class="media-tab active">PHOTO</div>
+        <div class="media-tab">VIDEO</div>
+      </div>
+      <div class="media-grid" id="mediaGrid">
+        <div class="media-grid-inner" id="mediaGridInner"></div>
+      </div>
+    </div>
+
+    <!-- 360 PLAYER -->
+    <div class="screen" id="screen-player">
+      <div class="player-screen">
+        <canvas class="player-canvas" id="playerCanvas"></canvas>
+        <div class="player-top" id="playerTop">
+          <span class="player-title">360° View</span>
+          <button class="compass-btn" onclick="resetPlayerView()">🧭</button>
+        </div>
+        <div class="player-bottom" id="playerBottom">
+          <div class="player-slider">
+            <span class="player-time" id="currentTime">0:00</span>
+            <input type="range" min="0" max="126" value="0" id="seekBar" oninput="seekVideo(this.value)" style="accent-color:#00a4d3;">
+            <span class="player-time" id="durationTime">2:06</span>
+          </div>
+          <div class="player-buttons">
+            <button class="player-btn" onclick="seekRel(-10)">⏪</button>
+            <button class="player-btn big" id="playPauseBtn" onclick="togglePlay()">⏸</button>
+            <button class="player-btn" onclick="seekRel(10)">⏩</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS SCREEN -->
+    <div class="screen" id="screen-settings">
+      <div style="background:#00a4d3;padding-top:10px;text-align:center;padding-bottom:8px;">
+        <span style="color:#fff;font-size:17px;font-weight:600;">Settings</span>
+      </div>
+      <div class="settings-scroll">
+        <div class="settings-section">
+          <div class="settings-header">Device</div>
+          <div class="settings-card">
+            <div class="settings-row"><span class="settings-label">Firmware</span><span class="settings-value">1.5.1</span></div>
+            <div class="settings-row"><span class="settings-label">Running mode active</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+            <div class="settings-row"><span class="settings-label" style="color:#ff3b30;">Format SD card</span></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-header">Wi-Fi</div>
+          <div class="settings-card">
+            <div class="settings-row"><span class="settings-label">Name</span><input class="settings-input" value="ORBI_360"></div>
+            <div class="settings-row"><span class="settings-label">Password</span><input class="settings-input" type="password" value="12345678"></div>
+            <div class="settings-row"><span class="settings-label">Verify</span><input class="settings-input" type="password" value="12345678"></div>
+            <div class="settings-row"><span class="settings-btn">Save</span></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-header">Request Support</div>
+          <div class="settings-card">
+            <div class="settings-row"><input class="settings-input" placeholder="Email address" style="text-align:left;margin-left:0;"></div>
+            <div class="settings-row"><textarea placeholder="Describe your issue" style="width:100%;border:none;background:transparent;font-size:16px;outline:none;min-height:60px;resize:none;font-family:inherit;"></textarea></div>
+            <div class="settings-row"><span class="settings-btn">Send report</span></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-header">Legal</div>
+          <div class="settings-card">
+            <div class="settings-row"><span class="settings-label" style="color:#00a4d3;">Terms and Conditions</span><span style="color:#c7c7cc;">›</span></div>
+            <div class="settings-row"><span class="settings-label" style="color:#00a4d3;">Privacy Policy</span><span style="color:#c7c7cc;">›</span></div>
+          </div>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <div class="nav-item active" data-tab="shoot" onclick="switchTab('shoot')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l4-4h10l4 4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3"/></svg>
+      <span>Shoot</span>
+    </div>
+    <div class="nav-item" data-tab="media" onclick="switchTab('media')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Media</span>
+    </div>
+    <div class="nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// === State ===
+let isConnected = false;
+let isLiveOn = false;
+let isRecording = false;
+let recSeconds = 0;
+let recTimer = null;
+let playerTime = 0;
+let playerPlaying = true;
+let playerTimer = null;
+let mediaLayout = 'grid';
+let mediaSource = 'glasses';
+let liveYaw = 0, livePitch = 0, liveFov = 90;
+let playerYaw = 0, playerPitch = 0, playerFov = 75;
+
+// === Status Bar Time ===
+function updateTime() {
+  const d = new Date();
+  document.getElementById('statusTime').textContent = 
+    d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+updateTime();
+setInterval(updateTime, 1000);
+
+// === Tab Switching ===
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.tab === tab));
+  
+  if (tab === 'media') renderMedia();
+  if (tab === 'settings') {}
+  if (tab === 'shoot' && !isConnected) showLobby();
+}
+
+// === Shoot Mode ===
+function showLobby() {
+  document.getElementById('lobbyView').style.display = 'flex';
+  document.getElementById('photoMode').style.display = 'none';
+  document.getElementById('liveMode').style.display = 'none';
+  document.getElementById('videoMode').style.display = 'none';
+  document.getElementById('shootOverlay').style.display = 'none';
+}
+
+function switchShootMode(mode) {
+  document.querySelectorAll('.shoot-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  
+  if (!isConnected) { showLobby(); return; }
+  
+  document.getElementById('lobbyView').style.display = 'none';
+  document.getElementById('photoMode').style.display = mode === 'photo' ? 'flex' : 'none';
+  document.getElementById('liveMode').style.display = mode === 'live' ? 'flex' : 'none';
+  document.getElementById('videoMode').style.display = mode === 'video' ? 'flex' : 'none';
+  document.getElementById('shootOverlay').style.display = 'flex';
+  
+  if (mode === 'live') startLiveDemo();
+  else stopLiveDemo();
+}
+
+function connectDevice() {
+  document.getElementById('lobbyView').innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#00a4d3,#006b8f);color:#fff;flex-direction:column;gap:12px;"><div style="font-size:40px;animation:spin 1s linear infinite;">⟳</div><div style="font-size:16px;">Connecting to ORBI 360...</div><div style="font-size:12px;opacity:0.7;">192.168.2.1:8080</div></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  setTimeout(() => {
+    isConnected = true;
+    switchShootMode('photo');
+  }, 2000);
+}
+
+function capturePhoto() {
+  const btn = document.querySelector('.shutter-btn');
+  btn.style.background = '#fff';
+  setTimeout(() => btn.style.background = 'rgba(255,255,255,0.3)', 200);
+  showToast('Got it!');
+}
+
+function toggleRecord() {
+  isRecording = !isRecording;
+  const btn = document.querySelector('.rec-btn');
+  const mode = document.getElementById('videoMode');
+  
+  if (isRecording) {
+    btn.innerHTML = '<div class="rec-pulse" style="border-radius:50%;width:36px;height:36px;"></div>';
+    recSeconds = 0;
+    recTimer = setInterval(() => {
+      recSeconds++;
+      const m = String(Math.floor(recSeconds/60)).padStart(2,'0');
+      const s = String(recSeconds%60).padStart(2,'0');
+      mode.querySelector('.photo-count').textContent = m + ':' + s;
+      mode.querySelector('.photo-text').textContent = 'Recording';
+    }, 1000);
+    mode.querySelector('.photo-icon').style.display = 'none';
+    mode.querySelector('.photo-count').textContent = '00:00';
+    mode.querySelector('.photo-text').textContent = 'Recording';
+    showToast('Video recording');
+  } else {
+    btn.innerHTML = '';
+    clearInterval(recTimer);
+    mode.querySelector('.photo-icon').style.display = 'block';
+    mode.querySelector('.photo-icon').textContent = '📹';
+    mode.querySelector('.photo-count').textContent = '1, 2...';
+    mode.querySelector('.photo-text').textContent = 'RECORD!';
+    showToast('Video saved');
+  }
+}
+
+// === Live Preview Demo (360° Procedural Pattern) ===
+let liveCanvas, liveCtx, liveAnim, liveDrag = false, liveLastX = 0, liveLastY = 0;
+let liveFrameCount = 0;
+
+function startLiveDemo() {
+  liveCanvas = document.getElementById('liveCanvas');
+  liveCtx = liveCanvas.getContext('2d');
+  resizeCanvas(liveCanvas);
+  
+  liveCanvas.addEventListener('mousedown', e => { liveDrag = true; liveLastX = e.clientX; liveLastY = e.clientY; });
+  liveCanvas.addEventListener('mousemove', e => {
+    if (!liveDrag) return;
+    liveYaw += (e.clientX - liveLastX) * 0.005;
+    livePitch = Math.max(-1.5, Math.min(1.5, livePitch + (e.clientY - liveLastY) * 0.005));
+    liveLastX = e.clientX; liveLastY = e.clientY;
+  });
+  window.addEventListener('mouseup', () => liveDrag = false);
+  
+  liveCanvas.addEventListener('touchstart', e => { liveDrag = true; liveLastX = e.touches[0].clientX; liveLastY = e.touches[0].clientY; });
+  liveCanvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!liveDrag) return;
+    liveYaw += (e.touches[0].clientX - liveLastX) * 0.005;
+    livePitch = Math.max(-1.5, Math.min(1.5, livePitch + (e.touches[0].clientY - liveLastY) * 0.005));
+    liveLastX = e.touches[0].clientX; liveLastY = e.touches[0].clientY;
+  });
+  liveCanvas.addEventListener('touchend', () => liveDrag = false);
+  
+  liveCanvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    liveFov = Math.max(40, Math.min(120, liveFov + e.deltaY * 0.1));
+  });
+  
+  animateLiveDemo();
+}
+
+function stopLiveDemo() {
+  if (liveAnim) cancelAnimationFrame(liveAnim);
+  if (isLiveOn) toggleLive();
+}
+
+function animateLiveDemo() {
+  const w = liveCanvas.width, h = liveCanvas.height;
+  const imgData = liveCtx.createImageData(w, h);
+  const data = imgData.data;
+  const t = Date.now() * 0.001;
+  const fovRad = liveFov * Math.PI / 180;
+  const focal = 1 / Math.tan(fovRad / 2);
+  const aspect = w / h;
+  
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const ndcX = (2 * (x + 0.5) / w - 1) * aspect / focal;
+      const ndcY = (1 - 2 * (y + 0.5) / h) / focal;
+      
+      // Ray direction (sphere intersection from inside)
+      let dx = ndcX, dy = ndcY, dz = -1;
+      // Apply yaw (Y rotation) and pitch (X rotation)
+      let cy = Math.cos(liveYaw), sy = Math.sin(liveYaw);
+      let cp = Math.cos(livePitch), sp = Math.sin(livePitch);
+      let rx = cy * dx + sy * dz;
+      let ry = sp * sy * dx + cp * dy - sp * cy * dz;
+      let rz = -cp * sy * dx + sp * dy + cp * cy * dz;
+      
+      // Normalize
+      const len = Math.sqrt(rx*rx + ry*ry + rz*rz);
+      rx /= len; ry /= len; rz /= len;
+      
+      // Equirectangular mapping
+      let yaw = Math.atan2(rx, rz);
+      let pitch = Math.asin(Math.max(-1, Math.min(1, ry)));
+      let u = yaw / (2 * Math.PI) + 0.5;
+      let v = 0.5 - pitch / Math.PI;
+      
+      let r, g, b;
+      
+      if (isLiveOn) {
+        // Simulated "live" pattern
+        const grid = 16;
+        const gx = (u * grid) % 1;
+        const gy = (v * grid) % 1;
+        const gridLine = (gx > 0.97 || gy > 0.97) ? 0.4 : 0;
+        
+        r = 0.2 + 0.15 * Math.sin(u * 8 + t * 0.3);
+        g = 0.35 + 0.15 * Math.sin(v * 6 + t * 0.5);
+        b = 0.5 + 0.1 * Math.sin((u + v) * 10 + t);
+        
+        // Cardinal markers
+        const nu = Math.abs(u - 0.5), nv = Math.abs(v - 0.0);
+        if (nu + nv < 0.03) { r = 1; g = 0.3; b = 0.3; }
+        const su = Math.abs(u - 0.0), sv = Math.abs(v - 0.5);
+        if (su + sv < 0.03) { r = 0.3; g = 1; b = 0.3; }
+        const eu = Math.abs(u - 0.75), ev = Math.abs(v - 0.5);
+        if (eu + ev < 0.03) { r = 0.3; g = 0.3; b = 1; }
+        const wu = Math.abs(u - 0.25), wv = Math.abs(v - 0.5);
+        if (wu + wv < 0.03) { r = 1; g = 1; b = 0.3; }
+        
+        r = Math.min(1, r + gridLine);
+        g = Math.min(1, g + gridLine);
+        b = Math.min(1, b + gridLine);
+        
+        liveFrameCount++;
+      } else {
+        // Demo pattern
+        const grid = 16;
+        const gx = (u * grid) % 1;
+        const gy = (v * grid) % 1;
+        const gridLine = (gx > 0.96 || gy > 0.96) ? 0.3 : 0;
+        
+        r = 0.5 + 0.3 * Math.sin(u * 6 + t * 0.5);
+        g = 0.3 + 0.2 * Math.cos(v * 4 + t * 0.3);
+        b = 0.6 + 0.2 * Math.sin((u + v) * 5 + t);
+        
+        r = Math.min(1, r + gridLine);
+        g = Math.min(1, g + gridLine);
+        b = Math.min(1, b + gridLine);
+      }
+      
+      const idx = (y * w + x) * 4;
+      data[idx] = r * 255;
+      data[idx+1] = g * 255;
+      data[idx+2] = b * 255;
+      data[idx+3] = 255;
+    }
+  }
+  
+  liveCtx.putImageData(imgData, 0, 0);
+  liveAnim = requestAnimationFrame(animateLiveDemo);
+}
+
+function toggleLive() {
+  isLiveOn = !isLiveOn;
+  const dot = document.getElementById('liveDot');
+  const status = document.getElementById('liveStatus');
+  const btn = document.getElementById('liveBtn');
+  const btnIcon = document.getElementById('liveBtnIcon');
+  const btnText = document.getElementById('liveBtnText');
+  const overlay = document.getElementById('liveStartOverlay');
+  const demoInfo = document.getElementById('demoInfo');
+  const connStatus = document.getElementById('connStatus');
+  const frameCounter = document.getElementById('frameCounter');
+  
+  if (isLiveOn) {
+    dot.classList.remove('idle');
+    status.textContent = 'LIVE';
+    btn.classList.add('active');
+    btnIcon.textContent = '⏹';
+    btnText.textContent = 'Stop';
+    overlay.style.display = 'none';
+    demoInfo.style.display = 'block';
+    connStatus.style.display = 'inline';
+    connStatus.textContent = 'Connecting…';
+    frameCounter.style.display = 'inline';
+    frameCounter.textContent = '0 frames';
+    liveFrameCount = 0;
+    
+    setTimeout(() => {
+      connStatus.textContent = 'Connected';
+    }, 1500);
+    
+    // Update frame counter
+    setInterval(() => {
+      if (isLiveOn) {
+        frameCounter.textContent = liveFrameCount + ' frames';
+      }
+    }, 500);
+  } else {
+    dot.classList.add('idle');
+    status.textContent = 'IDLE';
+    btn.classList.remove('active');
+    btnIcon.textContent = '▶';
+    btnText.textContent = 'Start';
+    overlay.style.display = 'block';
+    demoInfo.style.display = 'none';
+    connStatus.style.display = 'none';
+    frameCounter.style.display = 'none';
+  }
+}
+
+function resetView() {
+  liveYaw = 0; livePitch = 0; liveFov = 90;
+}
+
+// === Media Grid ===
+const mediaData = [
+  {name:'ORBI_0001', type:'photo', size:'4.7 MB', date:'Today', duration:''},
+  {name:'ORBI_0002', type:'video', size:'112.5 MB', date:'2h ago', duration:'0:42'},
+  {name:'ORBI_0003', type:'video', size:'345.3 MB', date:'1d ago', duration:'2:06'},
+  {name:'ORBI_0004', type:'photo', size:'5.1 MB', date:'2d ago', duration:''},
+  {name:'ORBI_0005', type:'photo', size:'4.9 MB', date:'3d ago', duration:''},
+  {name:'ORBI_0006', type:'video', size:'89.2 MB', date:'4d ago', duration:'0:33'},
+  {name:'ORBI_0007', type:'photo', size:'4.6 MB', date:'5d ago', duration:''},
+  {name:'ORBI_0008', type:'video', size:'201.8 MB', date:'1w ago', duration:'1:15'},
+];
+
+function renderMedia() {
+  const container = document.getElementById('mediaGridInner');
+  container.innerHTML = '';
+  
+  if (mediaSource === 'phone' && mediaData.length > 3) {
+    // Only show first 3 as "downloaded"
+    mediaData.slice(0, 3).forEach(item => container.appendChild(createMediaItem(item, true)));
+    container.innerHTML += '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#999;font-size:13px;">No more downloaded media.<br>Transfer from glasses to view here.</div>';
+  } else if (mediaData.length === 0) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#999;font-size:13px;"><div style="font-size:48px;margin-bottom:12px;">📡</div>No media on glasses.<br>Connect to view captures.</div>';
+  } else {
+    mediaData.forEach(item => container.appendChild(createMediaItem(item, mediaSource === 'phone')));
+  }
+}
+
+function createMediaItem(item, isLocal) {
+  const div = document.createElement('div');
+  div.className = 'media-item';
+  div.style.background = item.type === 'photo' ? 'linear-gradient(135deg,#00a4d3,#006b8f)' : 'linear-gradient(135deg,#333,#111)';
+  
+  const icon = item.type === 'photo' ? '📷' : '🎬';
+  div.innerHTML = `<span style="font-size:24px;">${icon}</span>`;
+  if (item.duration) {
+    div.innerHTML += `<span class="duration">${item.duration}</span>`;
+  }
+  if (isLocal) {
+    div.innerHTML += `<span class="badge" style="background:#34c759;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+  } else if (item.type === 'video' && !isLocal) {
+    div.innerHTML += `<span class="badge" style="background:#00a4d3;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>`;
+  }
+  
+  div.onclick = () => {
+    if (item.type === 'video') {
+      openPlayer(item);
+    } else {
+      showToast('Photo: ' + item.name);
+    }
+  };
+  
+  return div;
+}
+
+function switchMediaSource() {
+  mediaSource = document.getElementById('mediaSource').value;
+  renderMedia();
+}
+
+function toggleMediaLayout() {
+  const grid = document.getElementById('mediaGridInner');
+  const toggle = document.getElementById('mediaToggle');
+  if (mediaLayout === 'grid') {
+    mediaLayout = 'list';
+    grid.style.gridTemplateColumns = '1fr';
+    toggle.textContent = '▦';
+    document.querySelectorAll('.media-item').forEach(item => {
+      item.style.aspectRatio = 'auto';
+      item.style.height = '70px';
+      item.style.borderRadius = '8px';
+    });
+  } else {
+    mediaLayout = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    toggle.textContent = '☰';
+    renderMedia();
+  }
+}
+
+// === 360° Player ===
+let playerCanvas, playerCtx, playerAnim, playerDrag = false, playerLastX = 0, playerLastY = 0;
+
+function openPlayer(item) {
+  switchTab('player');
+  playerCanvas = document.getElementById('playerCanvas');
+  playerCtx = playerCanvas.getContext('2d');
+  resizeCanvas(playerCanvas);
+  playerTime = 0;
+  playerPlaying = true;
+  document.getElementById('playPauseBtn').textContent = '⏸';
+  
+  playerCanvas.addEventListener('mousedown', e => { playerDrag = true; playerLastX = e.clientX; playerLastY = e.clientY; });
+  playerCanvas.addEventListener('mousemove', e => {
+    if (!playerDrag) return;
+    playerYaw += (e.clientX - playerLastX) * 0.005;
+    playerPitch = Math.max(-1.5, Math.min(1.5, playerPitch + (e.clientY - playerLastY) * 0.005));
+    playerLastX = e.clientX; playerLastY = e.clientY;
+  });
+  window.addEventListener('mouseup', () => playerDrag = false);
+  
+  playerCanvas.addEventListener('touchstart', e => { playerDrag = true; playerLastX = e.touches[0].clientX; playerLastY = e.touches[0].clientY; });
+  playerCanvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!playerDrag) return;
+    playerYaw += (e.touches[0].clientX - playerLastX) * 0.005;
+    playerPitch = Math.max(-1.5, Math.min(1.5, playerPitch + (e.touches[0].clientY - playerLastY) * 0.005));
+    playerLastX = e.touches[0].clientX; playerLastY = e.touches[0].clientY;
+  });
+  playerCanvas.addEventListener('touchend', () => playerDrag = false);
+  
+  playerCanvas.addEventListener('wheel', e => {
+    e.preventDefault();
+    playerFov = Math.max(30, Math.min(110, playerFov + e.deltaY * 0.1));
+  });
+  
+  playerCanvas.addEventListener('click', () => {
+    const top = document.getElementById('playerTop');
+    const bottom = document.getElementById('playerBottom');
+    top.classList.toggle('player-controls-hidden');
+    bottom.classList.toggle('player-controls-hidden');
+  });
+  
+  if (playerTimer) clearInterval(playerTimer);
+  playerTimer = setInterval(() => {
+    if (playerPlaying) {
+      playerTime += 1;
+      if (playerTime > 126) playerTime = 0;
+      document.getElementById('currentTime').textContent = formatTime(playerTime);
+      document.getElementById('seekBar').value = playerTime;
+    }
+  }, 1000);
+  
+  animatePlayer();
+}
+
+function animatePlayer() {
+  const w = playerCanvas.width, h = playerCanvas.height;
+  const imgData = playerCtx.createImageData(w, h);
+  const data = imgData.data;
+  const t = playerTime;
+  const fovRad = playerFov * Math.PI / 180;
+  const focal = 1 / Math.tan(fovRad / 2);
+  const aspect = w / h;
+  
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const ndcX = (2 * (x + 0.5) / w - 1) * aspect / focal;
+      const ndcY = (1 - 2 * (y + 0.5) / h) / focal;
+      
+      let dx = ndcX, dy = ndcY, dz = -1;
+      let cy = Math.cos(playerYaw), sy = Math.sin(playerYaw);
+      let cp = Math.cos(playerPitch), sp = Math.sin(playerPitch);
+      let rx = cy * dx + sy * dz;
+      let ry = sp * sy * dx + cp * dy - sp * cy * dz;
+      let rz = -cp * sy * dx + sp * dy + cp * cy * dz;
+      
+      const len = Math.sqrt(rx*rx + ry*ry + rz*rz);
+      rx /= len; ry /= len; rz /= len;
+      
+      let yaw = Math.atan2(rx, rz);
+      let pitch = Math.asin(Math.max(-1, Math.min(1, ry)));
+      let u = yaw / (2 * Math.PI) + 0.5;
+      let v = 0.5 - pitch / Math.PI;
+      
+      // Simulated 360° video content
+      const grid = 24;
+      const gx = (u * grid) % 1;
+      const gy = (v * grid) % 1;
+      const gridLine = (gx > 0.97 || gy > 0.97) ? 0.2 : 0;
+      
+      let r = 0.15 + 0.1 * Math.sin(u * 12 + t * 0.1);
+      let g = 0.2 + 0.15 * Math.cos(v * 8 + t * 0.15);
+      let b = 0.3 + 0.15 * Math.sin((u * 2 + v * 3) * 5 + t * 0.2);
+      
+      // Simulated scene elements
+      const sky = Math.sin(v * Math.PI);
+      if (v > 0.5) {
+        r = Math.max(r, 0.1 + 0.05 * sky);
+        g = Math.max(g, 0.2 + 0.1 * sky);
+        b = Math.max(b, 0.4 + 0.2 * sky);
+      } else {
+        r = Math.max(r, 0.2 + 0.05 * (1 - v * 2));
+        g = Math.max(g, 0.15 + 0.05 * (1 - v * 2));
+        b = Math.max(b, 0.1 + 0.03 * (1 - v * 2));
+      }
+      
+      r = Math.min(1, r + gridLine);
+      g = Math.min(1, g + gridLine);
+      b = Math.min(1, b + gridLine);
+      
+      const idx = (y * w + x) * 4;
+      data[idx] = r * 255;
+      data[idx+1] = g * 255;
+      data[idx+2] = b * 255;
+      data[idx+3] = 255;
+    }
+  }
+  
+  playerCtx.putImageData(imgData, 0, 0);
+  playerAnim = requestAnimationFrame(animatePlayer);
+}
+
+function togglePlay() {
+  playerPlaying = !playerPlaying;
+  document.getElementById('playPauseBtn').textContent = playerPlaying ? '⏸' : '▶';
+}
+
+function seekVideo(val) {
+  playerTime = parseInt(val);
+  document.getElementById('currentTime').textContent = formatTime(playerTime);
+}
+
+function seekRel(delta) {
+  playerTime = Math.max(0, Math.min(126, playerTime + delta));
+  document.getElementById('currentTime').textContent = formatTime(playerTime);
+  document.getElementById('seekBar').value = playerTime;
+}
+
+function resetPlayerView() {
+  playerYaw = 0; playerPitch = 0; playerFov = 75;
+}
+
+function formatTime(s) {
+  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+}
+
+// === Helpers ===
+function resizeCanvas(canvas) {
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width / 2);
+  canvas.height = Math.floor(rect.height / 2);
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);color:#fff;padding:12px 24px;border-radius:12px;font-size:15px;z-index:9999;animation:fadeIn .2s;';
+  document.querySelector('.phone-frame').appendChild(toast);
+  setTimeout(() => toast.remove(), 1500);
+}
+
+window.addEventListener('resize', () => {
+  if (liveCanvas) resizeCanvas(liveCanvas);
+  if (playerCanvas) resizeCanvas(playerCanvas);
+});
+</script>
+</body>
+</html>
