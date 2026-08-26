@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+xcuserdata/
+
+# Android / reverse-engineering outputs
+*.apk
+apk_decoded/
+apk_unpacked/
+decompiled/
+tools/.store/
+
+# Local credentials and machine-specific configuration
+*.client_secrets.json
+.env
+.env.*
+
+# Swift / IDE output
+*.swp
+*.orig
+__pycache__/
+*.pyc
